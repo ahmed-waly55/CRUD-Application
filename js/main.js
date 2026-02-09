@@ -4,7 +4,7 @@ let productPriceInput = document.getElementById("price");
 let productCategoryInput = document.getElementById("productCategory");
 let productDescriptionInput = document.getElementById("productDescription");
 let btn = document.getElementById("btn");
-
+let currentIndex = 0;
 
 // Get localStorage
 if (localStorage.getItem("productlist") != null) {
@@ -20,7 +20,20 @@ if (localStorage.getItem("productlist") != null) {
 
 btn.onclick = function (e) {
     e.preventDefault();
-    addProduct();
+    if (btn.innerHTML == "Add Product") {
+        addProduct();
+    } if (btn.innerHTML == "Update") {
+        updateAction(currentIndex);
+        clearForm();
+        btn.innerHTML = "Add Product";
+    }
+}
+function clearForm() {
+    productNameInput.value = "";
+    productPriceInput.value = "";
+    productCategoryInput.value = "";
+    productDescriptionInput.value = "";
+    btn.innerHTML = "Add Product";
 }
 
 function addProduct() {
@@ -30,14 +43,37 @@ function addProduct() {
         category: productCategoryInput.value,
         description: productDescriptionInput.value
     }
-    productList.push(pro);
+    if (validateForm()) {
+        productList.push(pro);
+
+
+    } else {
+        window.alert("Please enter valid data");
+    }
     // console.log(pro);
     disPro();
-    console.log(productList);
+    // console.log(productList);
 
     //set localStorage 
     localStorage.setItem("productlist", JSON.stringify(productList));
+    clearForm();
+}
 
+function deletePro(index) {
+    productList.splice(index, 1);
+    disPro();
+    localStorage.setItem("productlist", JSON.stringify(productList));
+}
+
+function update(index) {
+    productNameInput.value = productList[index].name;
+    productPriceInput.value = productList[index].price;
+    productCategoryInput.value = productList[index].category;
+    productDescriptionInput.value = productList[index].description;
+    btn.innerHTML = "Update";
+    currentIndex = index;
+    // localStorage.setItem("productlist", JSON.stringify(productList));
+    // clearForm();
 }
 
 function disPro() {
@@ -51,13 +87,31 @@ function disPro() {
                  <td>${productList[i].category}</td>
                  <td>${productList[i].description}</td>
                  <td class="d-flex py-3">
-                     <button class="btn btn-outline-primary me-1">Update</button>
-                     <button class="btn btn-outline-danger ">Delete</button>
+                     <button onclick="update(${i})" class="btn btn-outline-primary me-1">Update</button>
+                     <button onclick="deletePro(${i})" class="btn btn-outline-danger ">Delete</button>
                  </td>
                 </tr>
 
         `
     }
-    console.log(allProducts);
+    // console.log(allProducts);
     document.getElementById("tbody").innerHTML = allProducts;
+}
+
+function validateForm() {
+    let name = productNameInput.value.length > 5 && productNameInput.value.length < 20;
+    let price = productPriceInput.value > 0;
+    let category = productCategoryInput.value.length > 3 && productCategoryInput.value.length < 20;
+    let description = productDescriptionInput.value.length > 5 && productDescriptionInput.value.length < 100;
+    return name && price && category && description;
+}
+
+function updateAction(index) {
+    productList[index].name = productNameInput.value;
+    productList[index].price = productPriceInput.value;
+    productList[index].category = productCategoryInput.value;
+    productList[index].description = productDescriptionInput.value;
+    disPro();
+    localStorage.setItem("productlist", JSON.stringify(productList));
+    clearForm();
 }
