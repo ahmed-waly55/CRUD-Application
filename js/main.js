@@ -139,6 +139,12 @@ function searchPro(term) {
                     </td>
                 </tr>  
             `
+        } else if (allProducts == ``) {
+            allProducts = `
+            <tr>
+                <td colspan="6" class="text-center">No products found</td>
+            </tr>  
+        `
         }
     }
     document.getElementById("tbody").innerHTML = allProducts;
