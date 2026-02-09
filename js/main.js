@@ -5,6 +5,12 @@ let productCategoryInput = document.getElementById("productCategory");
 let productDescriptionInput = document.getElementById("productDescription");
 let btn = document.getElementById("btn");
 let currentIndex = 0;
+let productSearchInput = document.getElementById("productSearch");
+// console.log(productSearchInput.value);
+productSearchInput.onkeyup = function () {
+    searchPro(productSearchInput.value);
+}
+
 
 // Get localStorage
 if (localStorage.getItem("productlist") != null) {
@@ -115,3 +121,27 @@ function updateAction(index) {
     localStorage.setItem("productlist", JSON.stringify(productList));
     clearForm();
 }
+
+function searchPro(term) {
+    var allProducts = ``;
+    for (let i = 0; i < productList.length; i++) {
+        if (productList[i].name.toLowerCase().includes(term.toLowerCase())) {
+            allProducts += `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${productList[i].name}</td>
+                    <td>${productList[i].price}</td>
+                    <td>${productList[i].category}</td>
+                    <td>${productList[i].description}</td>
+                    <td class="d-flex py-3">
+                        <button onclick="update(${i})" class="btn btn-outline-primary me-1">Update</button>
+                        <button onclick="deletePro(${i})" class="btn btn-outline-danger ">Delete</button>
+                    </td>
+                </tr>  
+            `
+        }
+    }
+    document.getElementById("tbody").innerHTML = allProducts;
+}
+
+
